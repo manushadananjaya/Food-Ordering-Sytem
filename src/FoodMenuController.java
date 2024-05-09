@@ -8,12 +8,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
-
+import java.util.Comparator;
 import java.util.function.Consumer;
 
 public class FoodMenuController {
@@ -24,8 +23,8 @@ public class FoodMenuController {
 
     public FoodMenuController(Stage stage) {
         this.stage = stage;
-        selectedFoods = FXCollections.observableArrayList();
-        addedFoods = FXCollections.observableArrayList();
+        this.selectedFoods = FXCollections.observableArrayList();
+        this.addedFoods = FXCollections.observableArrayList();
     }
 
     public Scene getScene() {
@@ -50,41 +49,69 @@ public class FoodMenuController {
         // Customize how the items are displayed in the ListView
         foodListView.setCellFactory(lv -> new FoodListCell());
 
-        Button confirmButton = new Button("Add Food Items");
+        Button confirmButton = new Button("Add Selected Food Items");
         confirmButton.setOnAction(this::handleConfirm);
 
         Button showAddedItemsButton = new Button("Show Added Items");
         showAddedItemsButton.setOnAction(this::showAddedItems);
-        
+
         Button backButton = new Button("Back");
         backButton.setOnAction(this::goBack);
 
-        root.getChildren().addAll(foodListView, confirmButton, showAddedItemsButton, backButton);
+        Button sortLowToHighButton = createStyledButton("Sort by Price (Low to High)");
+        sortLowToHighButton.setOnAction(e -> {
+            foodItems.sort(FoodComparators.sortByPriceLowToHigh());
+        });
 
-        return new Scene(root, 400, 300);
+        Button sortHighToLowButton = createStyledButton("Sort by Price (High to Low)");
+        sortHighToLowButton.setOnAction(e -> {
+            foodItems.sort(FoodComparators.sortByPriceHighToLow());
+        });
+
+        Button sortVegetarianButton = createStyledButton("Sort by Vegetarian");
+        sortVegetarianButton.setOnAction(e -> {
+            foodItems.sort(FoodComparators.sortByVegetarian());
+        });
+
+        Button sortNonVegetarianButton = createStyledButton("Sort by Non-Vegetarian");
+        sortNonVegetarianButton.setOnAction(e -> {
+            foodItems.sort(FoodComparators.sortByNonVegetarian());
+        });
+
+        HBox sortingButtons = new HBox(10);
+        sortingButtons.getChildren().addAll(sortLowToHighButton, sortHighToLowButton, sortVegetarianButton, sortNonVegetarianButton);
+
+        root.getChildren().addAll(foodListView, sortingButtons, confirmButton, showAddedItemsButton, backButton);
+
+        return new Scene(root, 800, 800);
+    }
+
+    private Button createStyledButton(String text) {
+        Button button = new Button(text);
+        button.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
+        return button;
     }
 
     private void handleConfirm(ActionEvent event) {
         // Clear the selected items list
         selectedFoods.clear();
-    
+
         // Add selected food items to the selectedFoods list
         ListView<Food> foodListView = (ListView<Food>) stage.getScene().getRoot().getChildrenUnmodifiable().get(0);
         ObservableList<Food> selectedItems = foodListView.getSelectionModel().getSelectedItems();
         selectedFoods.addAll(selectedItems);
-        
+
         // Add selected items to the addedFoods list
         addedFoods.addAll(selectedItems);
-    
+
         // Open a separate window for selecting quantity
         openQuantityWindow(selectedItems);
-    
+
         // Invoke the callback with the selected items
         if (foodSelectionCallback != null) {
             foodSelectionCallback.accept(selectedItems);
         }
     }
-    
 
     private void openQuantityWindow(ObservableList<Food> selectedItems) {
         Stage quantityStage = new Stage();
@@ -135,21 +162,21 @@ public class FoodMenuController {
     private void showAddedItems(ActionEvent event) {
         Stage addedItemsStage = new Stage();
         addedItemsStage.setTitle("Added Items");
-    
+
         ListView<String> addedItemsListView = new ListView<>(); // Use ListView<String> instead of ListView<Food>
         ObservableList<String> addedItems = FXCollections.observableArrayList(); // Use ObservableList<String> instead of ObservableList<Food>
-    
+
         // Populate the added items list
         for (Food food : addedFoods) {
             addedItems.add(food.getName() + " - Quantity: " + food.getQuantity()); // Display name and quantity
         }
-    
+
         addedItemsListView.setItems(addedItems);
-    
+
         VBox root = new VBox(10);
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.CENTER);
-    
+
         Button confirmButton = new Button("Confirm");
         confirmButton.setOnAction(e -> {
             // Proceed to the food cart controller screen
@@ -157,15 +184,15 @@ public class FoodMenuController {
             stage.setScene(foodCartController.getScene());
             addedItemsStage.close();
         });
-    
+
         root.getChildren().addAll(new Label("Added Items"), addedItemsListView, confirmButton);
-    
+
         Scene scene = new Scene(root, 300, 200);
         addedItemsStage.setScene(scene);
         addedItemsStage.initModality(Modality.APPLICATION_MODAL);
         addedItemsStage.show();
     }
-    
+
     private void goBack(ActionEvent event) {
         HomeController home = new HomeController(stage);
         stage.setScene(home.getScene());
@@ -175,12 +202,7 @@ public class FoodMenuController {
         this.foodSelectionCallback = callback;
     }
 
-    public void setInitialSelectedAndAdded( ObservableList<Food> addedFoods) {
-        
+    public void setInitialSelectedAndAdded(ObservableList<Food> addedFoods) {
         this.addedFoods = addedFoods;
-        
     }
 }
-
-
-
