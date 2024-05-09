@@ -178,5 +178,9 @@ public class FoodMenuController {
     public void setInitialSelectedAndAdded( ObservableList<Food> addedFoods) {
         
         this.addedFoods = addedFoods;
+        
     }
 }
+
+
+
