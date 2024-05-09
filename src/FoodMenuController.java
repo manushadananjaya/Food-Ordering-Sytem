@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -42,11 +43,16 @@ public class FoodMenuController {
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.CENTER);
 
+        // Header Caption
+        Label headerLabel = new Label("Food Menu");
+        headerLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;");
+
         // Search TextField
         TextField searchField = new TextField();
         searchField.setPromptText("Search Foods");
 
         Button searchButton = new Button("Search");
+        searchButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         searchButton.setOnAction(e -> filterFoods(searchField.getText()));
 
         HBox searchBox = new HBox(10);
@@ -62,12 +68,15 @@ public class FoodMenuController {
         foodListView.setCellFactory(lv -> new FoodListCell());
 
         Button confirmButton = new Button("Add Selected Food Items");
+        confirmButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         confirmButton.setOnAction(this::handleConfirm);
 
         Button showAddedItemsButton = new Button("Show Added Items");
+        showAddedItemsButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         showAddedItemsButton.setOnAction(this::showAddedItems);
 
         Button backButton = new Button("Back");
+        backButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         backButton.setOnAction(this::goBack);
 
         Button sortLowToHighButton = createStyledButton("Sort by Price (Low to High)");
@@ -93,14 +102,14 @@ public class FoodMenuController {
         HBox sortingButtons = new HBox(10);
         sortingButtons.getChildren().addAll(sortLowToHighButton, sortHighToLowButton, sortVegetarianButton, sortNonVegetarianButton);
 
-        root.getChildren().addAll(searchBox, foodListView, sortingButtons, confirmButton, showAddedItemsButton, backButton);
+        root.getChildren().addAll(headerLabel, searchBox, foodListView, sortingButtons, confirmButton, showAddedItemsButton, backButton);
 
         return new Scene(root, 800, 800);
     }
 
     private Button createStyledButton(String text) {
         Button button = new Button(text);
-        button.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
+        button.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         return button;
     }
 
@@ -147,6 +156,7 @@ public class FoodMenuController {
         }
 
         Button saveButton = new Button("Save");
+        saveButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         saveButton.setOnAction(e -> {
             // Save the quantity for each food item
             for (int i = 0; i < selectedItems.size(); i++) {
@@ -189,6 +199,7 @@ public class FoodMenuController {
         root.setAlignment(Pos.CENTER);
 
         Button confirmButton = new Button("Confirm");
+        confirmButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         confirmButton.setOnAction(e -> {
             // Proceed to the food cart controller screen
             FoodCartController foodCartController = new FoodCartController(stage, addedFoods);
