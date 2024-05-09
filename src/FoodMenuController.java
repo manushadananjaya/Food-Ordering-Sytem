@@ -8,11 +8,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import java.util.Comparator;
 import java.util.function.Consumer;
 
@@ -61,22 +59,22 @@ public class FoodMenuController {
 
         Button sortLowToHighButton = new Button("Sort by Price (Low to High)");
         sortLowToHighButton.setOnAction(e -> {
-            foodItems.sort(Comparator.comparingDouble(Food::getPrice));
+            foodItems.sort(FoodComparators.sortByPriceLowToHigh());
         });
 
         Button sortHighToLowButton = new Button("Sort by Price (High to Low)");
         sortHighToLowButton.setOnAction(e -> {
-            foodItems.sort(Comparator.comparingDouble(Food::getPrice).reversed());
+            foodItems.sort(FoodComparators.sortByPriceHighToLow());
         });
 
-        Button sortVegetarianButton = new Button("Sort by Non-Vegetarian");
+        Button sortVegetarianButton = new Button("Sort by Vegetarian");
         sortVegetarianButton.setOnAction(e -> {
-            foodItems.sort(Comparator.comparing(Food::isVegetarian));
+            foodItems.sort(FoodComparators.sortByVegetarian());
         });
 
-        Button sortNonVegetarianButton = new Button("Sort by Vegetarian");
+        Button sortNonVegetarianButton = new Button("Sort by Non-Vegetarian");
         sortNonVegetarianButton.setOnAction(e -> {
-            foodItems.sort(Comparator.comparing(food -> !food.isVegetarian()));
+            foodItems.sort(FoodComparators.sortByNonVegetarian());
         });
 
         root.getChildren().addAll(foodListView, confirmButton, showAddedItemsButton, backButton,
