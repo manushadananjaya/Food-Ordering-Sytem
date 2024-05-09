@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "MainApp",
+            "request": "launch",
+            "mainClass": "MainApp",
+            "projectName": "Food-Ordering-Sytem_b2215a4",
+            "vmArgs": "--module-path \"/Users/manushadananjaya/Documents/javafx-sdk-22.0.1/lib\" --add-modules javafx.controls,javafx.fxml"
+
+        }
+    ]
+}
