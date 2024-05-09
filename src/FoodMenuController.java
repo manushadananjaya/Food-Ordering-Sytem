@@ -12,7 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import java.util.Comparator;
+
 import java.util.function.Consumer;
 
 public class FoodMenuController {
@@ -20,6 +20,7 @@ public class FoodMenuController {
     private ObservableList<Food> selectedFoods;
     private ObservableList<Food> addedFoods;
     private Consumer<ObservableList<Food>> foodSelectionCallback;
+    private ListView<Food> foodListView;
 
     public FoodMenuController(Stage stage) {
         this.stage = stage;
@@ -32,7 +33,14 @@ public class FoodMenuController {
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.CENTER);
 
-        ListView<Food> foodListView = new ListView<>();
+        // Search TextField
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search Foods");
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterFoods(newValue); // Call filterFoods method whenever the search text changes
+        });
+
+        foodListView = new ListView<>();
         ObservableList<Food> foodItems = FXCollections.observableArrayList(
                 new Food("Burger", 5.99, false),
                 new Food("Pizza", 8.99, true),
@@ -81,7 +89,7 @@ public class FoodMenuController {
         HBox sortingButtons = new HBox(10);
         sortingButtons.getChildren().addAll(sortLowToHighButton, sortHighToLowButton, sortVegetarianButton, sortNonVegetarianButton);
 
-        root.getChildren().addAll(foodListView, sortingButtons, confirmButton, showAddedItemsButton, backButton);
+        root.getChildren().addAll(searchField, foodListView, sortingButtons, confirmButton, showAddedItemsButton, backButton);
 
         return new Scene(root, 800, 800);
     }
@@ -97,7 +105,6 @@ public class FoodMenuController {
         selectedFoods.clear();
 
         // Add selected food items to the selectedFoods list
-        ListView<Food> foodListView = (ListView<Food>) stage.getScene().getRoot().getChildrenUnmodifiable().get(0);
         ObservableList<Food> selectedItems = foodListView.getSelectionModel().getSelectedItems();
         selectedFoods.addAll(selectedItems);
 
@@ -204,5 +211,15 @@ public class FoodMenuController {
 
     public void setInitialSelectedAndAdded(ObservableList<Food> addedFoods) {
         this.addedFoods = addedFoods;
+    }
+
+    private void filterFoods(String searchText) {
+        ObservableList<Food> filteredList = FXCollections.observableArrayList();
+        for (Food food : foodListView.getItems()) {
+            if (food.getName().toLowerCase().contains(searchText.toLowerCase())) {
+                filteredList.add(food);
+            }
+        }
+        foodListView.setItems(filteredList);
     }
 }
