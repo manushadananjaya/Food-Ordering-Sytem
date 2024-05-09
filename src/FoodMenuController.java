@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -48,7 +49,7 @@ public class FoodMenuController {
         // Customize how the items are displayed in the ListView
         foodListView.setCellFactory(lv -> new FoodListCell());
 
-        Button confirmButton = new Button("Add Food Items");
+        Button confirmButton = new Button("Add Selected Food Items");
         confirmButton.setOnAction(this::handleConfirm);
 
         Button showAddedItemsButton = new Button("Show Added Items");
@@ -57,30 +58,38 @@ public class FoodMenuController {
         Button backButton = new Button("Back");
         backButton.setOnAction(this::goBack);
 
-        Button sortLowToHighButton = new Button("Sort by Price (Low to High)");
+        Button sortLowToHighButton = createStyledButton("Sort by Price (Low to High)");
         sortLowToHighButton.setOnAction(e -> {
             foodItems.sort(FoodComparators.sortByPriceLowToHigh());
         });
 
-        Button sortHighToLowButton = new Button("Sort by Price (High to Low)");
+        Button sortHighToLowButton = createStyledButton("Sort by Price (High to Low)");
         sortHighToLowButton.setOnAction(e -> {
             foodItems.sort(FoodComparators.sortByPriceHighToLow());
         });
 
-        Button sortVegetarianButton = new Button("Sort by Vegetarian");
+        Button sortVegetarianButton = createStyledButton("Sort by Vegetarian");
         sortVegetarianButton.setOnAction(e -> {
             foodItems.sort(FoodComparators.sortByVegetarian());
         });
 
-        Button sortNonVegetarianButton = new Button("Sort by Non-Vegetarian");
+        Button sortNonVegetarianButton = createStyledButton("Sort by Non-Vegetarian");
         sortNonVegetarianButton.setOnAction(e -> {
             foodItems.sort(FoodComparators.sortByNonVegetarian());
         });
 
-        root.getChildren().addAll(foodListView, confirmButton, showAddedItemsButton, backButton,
-                sortLowToHighButton, sortHighToLowButton, sortVegetarianButton, sortNonVegetarianButton);
+        HBox sortingButtons = new HBox(10);
+        sortingButtons.getChildren().addAll(sortLowToHighButton, sortHighToLowButton, sortVegetarianButton, sortNonVegetarianButton);
+
+        root.getChildren().addAll(foodListView, sortingButtons, confirmButton, showAddedItemsButton, backButton);
 
         return new Scene(root, 800, 800);
+    }
+
+    private Button createStyledButton(String text) {
+        Button button = new Button(text);
+        button.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
+        return button;
     }
 
     private void handleConfirm(ActionEvent event) {
