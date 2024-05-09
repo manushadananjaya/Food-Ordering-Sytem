@@ -21,11 +21,20 @@ public class FoodMenuController {
     private ObservableList<Food> addedFoods;
     private Consumer<ObservableList<Food>> foodSelectionCallback;
     private ListView<Food> foodListView;
+    private ObservableList<Food> originalFoodItems;
 
     public FoodMenuController(Stage stage) {
         this.stage = stage;
         this.selectedFoods = FXCollections.observableArrayList();
         this.addedFoods = FXCollections.observableArrayList();
+        this.originalFoodItems = FXCollections.observableArrayList(
+                new Food("Burger", 5.99, false),
+                new Food("Pizza", 8.99, true),
+                new Food("Salad", 4.99, true),
+                new Food("Fried Rice", 5.99, true),
+                new Food("Biriyani", 8.99, false),
+                new Food("Kottu", 4.99, false)
+        );
     }
 
     public Scene getScene() {
@@ -36,20 +45,15 @@ public class FoodMenuController {
         // Search TextField
         TextField searchField = new TextField();
         searchField.setPromptText("Search Foods");
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filterFoods(newValue); // Call filterFoods method whenever the search text changes
-        });
+
+        Button searchButton = new Button("Search");
+        searchButton.setOnAction(e -> filterFoods(searchField.getText()));
+
+        HBox searchBox = new HBox(10);
+        searchBox.getChildren().addAll(searchField, searchButton);
 
         foodListView = new ListView<>();
-        ObservableList<Food> foodItems = FXCollections.observableArrayList(
-                new Food("Burger", 5.99, false),
-                new Food("Pizza", 8.99, true),
-                new Food("Salad", 4.99, true),
-                new Food("Fried Rice", 5.99, true),
-                new Food("Biriyani", 8.99, false),
-                new Food("Kottu", 4.99, false)
-        );
-        foodListView.setItems(foodItems);
+        foodListView.setItems(originalFoodItems);
 
         // Enable multiple selections
         foodListView.getSelectionModel().setSelectionMode(javafx.scene.control.SelectionMode.MULTIPLE);
@@ -68,28 +72,28 @@ public class FoodMenuController {
 
         Button sortLowToHighButton = createStyledButton("Sort by Price (Low to High)");
         sortLowToHighButton.setOnAction(e -> {
-            foodItems.sort(FoodComparators.sortByPriceLowToHigh());
+            originalFoodItems.sort(FoodComparators.sortByPriceLowToHigh());
         });
 
         Button sortHighToLowButton = createStyledButton("Sort by Price (High to Low)");
         sortHighToLowButton.setOnAction(e -> {
-            foodItems.sort(FoodComparators.sortByPriceHighToLow());
+            originalFoodItems.sort(FoodComparators.sortByPriceHighToLow());
         });
 
         Button sortVegetarianButton = createStyledButton("Sort by Vegetarian");
         sortVegetarianButton.setOnAction(e -> {
-            foodItems.sort(FoodComparators.sortByVegetarian());
+            originalFoodItems.sort(FoodComparators.sortByVegetarian());
         });
 
         Button sortNonVegetarianButton = createStyledButton("Sort by Non-Vegetarian");
         sortNonVegetarianButton.setOnAction(e -> {
-            foodItems.sort(FoodComparators.sortByNonVegetarian());
+            originalFoodItems.sort(FoodComparators.sortByNonVegetarian());
         });
 
         HBox sortingButtons = new HBox(10);
         sortingButtons.getChildren().addAll(sortLowToHighButton, sortHighToLowButton, sortVegetarianButton, sortNonVegetarianButton);
 
-        root.getChildren().addAll(searchField, foodListView, sortingButtons, confirmButton, showAddedItemsButton, backButton);
+        root.getChildren().addAll(searchBox, foodListView, sortingButtons, confirmButton, showAddedItemsButton, backButton);
 
         return new Scene(root, 800, 800);
     }
@@ -215,7 +219,7 @@ public class FoodMenuController {
 
     private void filterFoods(String searchText) {
         ObservableList<Food> filteredList = FXCollections.observableArrayList();
-        for (Food food : foodListView.getItems()) {
+        for (Food food : originalFoodItems) {
             if (food.getName().toLowerCase().contains(searchText.toLowerCase())) {
                 filteredList.add(food);
             }
