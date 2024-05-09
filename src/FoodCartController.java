@@ -26,10 +26,10 @@ public class FoodCartController {
         ListView<String> cartListView = new ListView<>();
         updateListView(cartListView); // Update ListView initially
 
-        Button proceedToPaymentButton = new Button("Proceed to Payment");
-        Button deleteButton = new Button("Delete Food Items");
-        Button addMoreFoodsButton = new Button("Add more Foods");
-        Button backButton = new Button("Back to Food Menu");
+        Button proceedToPaymentButton = createStyledButton("Proceed to Payment");
+        Button deleteButton = createStyledButton("Delete Food Items");
+        Button addMoreFoodsButton = createStyledButton("Add more Foods");
+        Button backButton = createStyledButton("Back to Food Menu");
 
         proceedToPaymentButton.setOnAction(this::proceedToPayment);
         deleteButton.setOnAction(this::deleteFoodItems);
@@ -38,7 +38,13 @@ public class FoodCartController {
 
         root.getChildren().addAll(cartListView, proceedToPaymentButton, deleteButton, addMoreFoodsButton, backButton);
 
-        return new Scene(root, 400, 300);
+        return new Scene(root, 500, 400);
+    }
+
+    private Button createStyledButton(String text) {
+        Button button = new Button(text);
+        button.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
+        return button;
     }
 
     private void proceedToPayment(ActionEvent event) {

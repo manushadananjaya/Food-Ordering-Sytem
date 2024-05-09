@@ -4,11 +4,13 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -21,27 +23,14 @@ public class FoodMenuController {
     private ObservableList<Food> addedFoods;
     private Consumer<ObservableList<Food>> foodSelectionCallback;
     private ListView<Food> foodListView;
+    private ObservableList<Food> originalFoodItems;
+    private Button confirmButton;
 
     public FoodMenuController(Stage stage) {
         this.stage = stage;
         this.selectedFoods = FXCollections.observableArrayList();
         this.addedFoods = FXCollections.observableArrayList();
-    }
-
-    public Scene getScene() {
-        VBox root = new VBox(10);
-        root.setPadding(new Insets(20));
-        root.setAlignment(Pos.CENTER);
-
-        // Search TextField
-        TextField searchField = new TextField();
-        searchField.setPromptText("Search Foods");
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filterFoods(newValue); // Call filterFoods method whenever the search text changes
-        });
-
-        foodListView = new ListView<>();
-        ObservableList<Food> foodItems = FXCollections.observableArrayList(
+        this.originalFoodItems = FXCollections.observableArrayList(
                 new Food("Burger", 5.99, false),
                 new Food("Pizza", 8.99, true),
                 new Food("Salad", 4.99, true),
@@ -49,7 +38,30 @@ public class FoodMenuController {
                 new Food("Biriyani", 8.99, false),
                 new Food("Kottu", 4.99, false)
         );
-        foodListView.setItems(foodItems);
+    }
+
+    public Scene getScene() {
+        VBox root = new VBox(10);
+        root.setPadding(new Insets(20));
+        root.setAlignment(Pos.CENTER);
+
+        // Header Caption
+        Label headerLabel = new Label("Food Menu");
+        headerLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;");
+
+        // Search TextField
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search Foods");
+
+        Button searchButton = new Button("Search");
+        searchButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 20px; -fx-border-radius: 5px;");
+        searchButton.setOnAction(e -> filterFoods(searchField.getText()));
+
+        HBox searchBox = new HBox(10);
+        searchBox.getChildren().addAll(searchField, searchButton);
+
+        foodListView = new ListView<>();
+        foodListView.setItems(originalFoodItems);
 
         // Enable multiple selections
         foodListView.getSelectionModel().setSelectionMode(javafx.scene.control.SelectionMode.MULTIPLE);
@@ -57,55 +69,65 @@ public class FoodMenuController {
         // Customize how the items are displayed in the ListView
         foodListView.setCellFactory(lv -> new FoodListCell());
 
-        Button confirmButton = new Button("Add Selected Food Items");
+        confirmButton = new Button("Add Selected Food Items");
+        confirmButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         confirmButton.setOnAction(this::handleConfirm);
 
         Button showAddedItemsButton = new Button("Show Added Items");
+        showAddedItemsButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         showAddedItemsButton.setOnAction(this::showAddedItems);
 
         Button backButton = new Button("Back");
+        backButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         backButton.setOnAction(this::goBack);
 
         Button sortLowToHighButton = createStyledButton("Sort by Price (Low to High)");
         sortLowToHighButton.setOnAction(e -> {
-            foodItems.sort(FoodComparators.sortByPriceLowToHigh());
+            originalFoodItems.sort(FoodComparators.sortByPriceLowToHigh());
         });
 
         Button sortHighToLowButton = createStyledButton("Sort by Price (High to Low)");
         sortHighToLowButton.setOnAction(e -> {
-            foodItems.sort(FoodComparators.sortByPriceHighToLow());
+            originalFoodItems.sort(FoodComparators.sortByPriceHighToLow());
         });
 
         Button sortVegetarianButton = createStyledButton("Sort by Vegetarian");
         sortVegetarianButton.setOnAction(e -> {
-            foodItems.sort(FoodComparators.sortByVegetarian());
+            originalFoodItems.sort(FoodComparators.sortByVegetarian());
         });
 
         Button sortNonVegetarianButton = createStyledButton("Sort by Non-Vegetarian");
         sortNonVegetarianButton.setOnAction(e -> {
-            foodItems.sort(FoodComparators.sortByNonVegetarian());
+            originalFoodItems.sort(FoodComparators.sortByNonVegetarian());
         });
 
         HBox sortingButtons = new HBox(10);
         sortingButtons.getChildren().addAll(sortLowToHighButton, sortHighToLowButton, sortVegetarianButton, sortNonVegetarianButton);
 
-        root.getChildren().addAll(searchField, foodListView, sortingButtons, confirmButton, showAddedItemsButton, backButton);
+        root.getChildren().addAll(headerLabel, searchBox, foodListView, sortingButtons, confirmButton, showAddedItemsButton, backButton);
 
         return new Scene(root, 800, 800);
     }
 
     private Button createStyledButton(String text) {
         Button button = new Button(text);
-        button.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
+        button.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         return button;
     }
 
     private void handleConfirm(ActionEvent event) {
+        // Check if any items are selected
+        ObservableList<Food> selectedItems = foodListView.getSelectionModel().getSelectedItems();
+        if (selectedItems.isEmpty()) {
+            // Display a message indicating that no items are selected
+            showAlert("No Items Selected", "Please select food items before adding.");
+            return;
+        }
+
         // Clear the selected items list
         selectedFoods.clear();
 
         // Add selected food items to the selectedFoods list
-        ObservableList<Food> selectedItems = foodListView.getSelectionModel().getSelectedItems();
         selectedFoods.addAll(selectedItems);
 
         // Add selected items to the addedFoods list
@@ -143,6 +165,7 @@ public class FoodMenuController {
         }
 
         Button saveButton = new Button("Save");
+        saveButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         saveButton.setOnAction(e -> {
             // Save the quantity for each food item
             for (int i = 0; i < selectedItems.size(); i++) {
@@ -185,6 +208,7 @@ public class FoodMenuController {
         root.setAlignment(Pos.CENTER);
 
         Button confirmButton = new Button("Confirm");
+        confirmButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         confirmButton.setOnAction(e -> {
             // Proceed to the food cart controller screen
             FoodCartController foodCartController = new FoodCartController(stage, addedFoods);
@@ -215,11 +239,19 @@ public class FoodMenuController {
 
     private void filterFoods(String searchText) {
         ObservableList<Food> filteredList = FXCollections.observableArrayList();
-        for (Food food : foodListView.getItems()) {
+        for (Food food : originalFoodItems) {
             if (food.getName().toLowerCase().contains(searchText.toLowerCase())) {
                 filteredList.add(food);
             }
         }
         foodListView.setItems(filteredList);
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
