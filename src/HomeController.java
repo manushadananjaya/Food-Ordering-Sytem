@@ -14,6 +14,7 @@ public class HomeController {
     public HomeController(Stage stage) {
         this.stage = stage;
     }
+    
 
     public Scene getScene() {
         VBox root = new VBox(10);
