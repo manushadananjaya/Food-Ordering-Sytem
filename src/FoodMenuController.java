@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -115,11 +116,18 @@ public class FoodMenuController {
     }
 
     private void handleConfirm(ActionEvent event) {
+        // Check if any items are selected
+        ObservableList<Food> selectedItems = foodListView.getSelectionModel().getSelectedItems();
+        if (selectedItems.isEmpty()) {
+            // Display a message indicating that no items are selected
+            showAlert("No Items Selected", "Please select food items before adding.");
+            return;
+        }
+
         // Clear the selected items list
         selectedFoods.clear();
 
         // Add selected food items to the selectedFoods list
-        ObservableList<Food> selectedItems = foodListView.getSelectionModel().getSelectedItems();
         selectedFoods.addAll(selectedItems);
 
         // Add selected items to the addedFoods list
@@ -237,5 +245,13 @@ public class FoodMenuController {
             }
         }
         foodListView.setItems(filteredList);
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
