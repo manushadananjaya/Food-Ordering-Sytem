@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -68,12 +69,12 @@ public class FoodMenuController {
             foodItems.sort(Comparator.comparingDouble(Food::getPrice).reversed());
         });
 
-        Button sortVegetarianButton = new Button("Sort by Vegetarian");
+        Button sortVegetarianButton = new Button("Sort by Non-Vegetarian");
         sortVegetarianButton.setOnAction(e -> {
             foodItems.sort(Comparator.comparing(Food::isVegetarian));
         });
 
-        Button sortNonVegetarianButton = new Button("Sort by Non-Vegetarian");
+        Button sortNonVegetarianButton = new Button("Sort by Vegetarian");
         sortNonVegetarianButton.setOnAction(e -> {
             foodItems.sort(Comparator.comparing(food -> !food.isVegetarian()));
         });
@@ -81,7 +82,7 @@ public class FoodMenuController {
         root.getChildren().addAll(foodListView, confirmButton, showAddedItemsButton, backButton,
                 sortLowToHighButton, sortHighToLowButton, sortVegetarianButton, sortNonVegetarianButton);
 
-        return new Scene(root, 400, 400);
+        return new Scene(root, 800, 800);
     }
 
     private void handleConfirm(ActionEvent event) {
