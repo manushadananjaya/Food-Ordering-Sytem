@@ -37,7 +37,7 @@ public class HomeController {
         displayHotelInfoButton.setOnAction(this::handleDisplayHotelInfo);
         displayFoodMenuButton.setOnAction(this::handleDisplayFoodMenu);
 
-        return new Scene(root, 400, 300);
+        return new Scene(root, 600, 500);
     }
 
     private void handleDisplayHotelInfo(ActionEvent event) {
