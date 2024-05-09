@@ -23,6 +23,7 @@ public class FoodMenuController {
     private Consumer<ObservableList<Food>> foodSelectionCallback;
     private ListView<Food> foodListView;
     private ObservableList<Food> originalFoodItems;
+    private Button confirmButton;
 
     public FoodMenuController(Stage stage) {
         this.stage = stage;
@@ -52,7 +53,7 @@ public class FoodMenuController {
         searchField.setPromptText("Search Foods");
 
         Button searchButton = new Button("Search");
-        searchButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
+        searchButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 20px; -fx-border-radius: 5px;");
         searchButton.setOnAction(e -> filterFoods(searchField.getText()));
 
         HBox searchBox = new HBox(10);
@@ -67,9 +68,10 @@ public class FoodMenuController {
         // Customize how the items are displayed in the ListView
         foodListView.setCellFactory(lv -> new FoodListCell());
 
-        Button confirmButton = new Button("Add Selected Food Items");
+        confirmButton = new Button("Add Selected Food Items");
         confirmButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         confirmButton.setOnAction(this::handleConfirm);
+        confirmButton.setDisable(true);
 
         Button showAddedItemsButton = new Button("Show Added Items");
         showAddedItemsButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");

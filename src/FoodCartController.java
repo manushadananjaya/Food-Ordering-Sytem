@@ -38,7 +38,7 @@ public class FoodCartController {
 
         root.getChildren().addAll(cartListView, proceedToPaymentButton, deleteButton, addMoreFoodsButton, backButton);
 
-        return new Scene(root, 400, 300);
+        return new Scene(root, 500, 400);
     }
 
     private Button createStyledButton(String text) {

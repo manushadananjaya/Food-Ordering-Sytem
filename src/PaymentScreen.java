@@ -79,7 +79,7 @@ public class PaymentScreen {
         root.getChildren().addAll(totalBillLabel, detailedBillBox, cardNumberLabel, cardNumberField, expiryDateLabel, expiryDateField,
                 cvvLabel, cvvField, confirmPaymentButton, cancelPaymentButton, confirmationLabel);
 
-        return new Scene(root, 400, 400);
+        return new Scene(root, 600, 500);
     }
 
     private double calculateTotalBill() {
