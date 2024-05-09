@@ -71,7 +71,6 @@ public class FoodMenuController {
         confirmButton = new Button("Add Selected Food Items");
         confirmButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
         confirmButton.setOnAction(this::handleConfirm);
-        confirmButton.setDisable(true);
 
         Button showAddedItemsButton = new Button("Show Added Items");
         showAddedItemsButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px;");
