@@ -7,13 +7,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-
+import java.util.Comparator;
 import java.util.function.Consumer;
 
 public class FoodMenuController {
@@ -24,8 +23,8 @@ public class FoodMenuController {
 
     public FoodMenuController(Stage stage) {
         this.stage = stage;
-        selectedFoods = FXCollections.observableArrayList();
-        addedFoods = FXCollections.observableArrayList();
+        this.selectedFoods = FXCollections.observableArrayList();
+        this.addedFoods = FXCollections.observableArrayList();
     }
 
     public Scene getScene() {
@@ -55,36 +54,56 @@ public class FoodMenuController {
 
         Button showAddedItemsButton = new Button("Show Added Items");
         showAddedItemsButton.setOnAction(this::showAddedItems);
-        
+
         Button backButton = new Button("Back");
         backButton.setOnAction(this::goBack);
 
-        root.getChildren().addAll(foodListView, confirmButton, showAddedItemsButton, backButton);
+        Button sortLowToHighButton = new Button("Sort by Price (Low to High)");
+        sortLowToHighButton.setOnAction(e -> {
+            foodItems.sort(Comparator.comparingDouble(Food::getPrice));
+        });
 
-        return new Scene(root, 400, 300);
+        Button sortHighToLowButton = new Button("Sort by Price (High to Low)");
+        sortHighToLowButton.setOnAction(e -> {
+            foodItems.sort(Comparator.comparingDouble(Food::getPrice).reversed());
+        });
+
+        Button sortVegetarianButton = new Button("Sort by Vegetarian");
+        sortVegetarianButton.setOnAction(e -> {
+            foodItems.sort(Comparator.comparing(Food::isVegetarian));
+        });
+
+        Button sortNonVegetarianButton = new Button("Sort by Non-Vegetarian");
+        sortNonVegetarianButton.setOnAction(e -> {
+            foodItems.sort(Comparator.comparing(food -> !food.isVegetarian()));
+        });
+
+        root.getChildren().addAll(foodListView, confirmButton, showAddedItemsButton, backButton,
+                sortLowToHighButton, sortHighToLowButton, sortVegetarianButton, sortNonVegetarianButton);
+
+        return new Scene(root, 400, 400);
     }
 
     private void handleConfirm(ActionEvent event) {
         // Clear the selected items list
         selectedFoods.clear();
-    
+
         // Add selected food items to the selectedFoods list
         ListView<Food> foodListView = (ListView<Food>) stage.getScene().getRoot().getChildrenUnmodifiable().get(0);
         ObservableList<Food> selectedItems = foodListView.getSelectionModel().getSelectedItems();
         selectedFoods.addAll(selectedItems);
-        
+
         // Add selected items to the addedFoods list
         addedFoods.addAll(selectedItems);
-    
+
         // Open a separate window for selecting quantity
         openQuantityWindow(selectedItems);
-    
+
         // Invoke the callback with the selected items
         if (foodSelectionCallback != null) {
             foodSelectionCallback.accept(selectedItems);
         }
     }
-    
 
     private void openQuantityWindow(ObservableList<Food> selectedItems) {
         Stage quantityStage = new Stage();
@@ -135,21 +154,21 @@ public class FoodMenuController {
     private void showAddedItems(ActionEvent event) {
         Stage addedItemsStage = new Stage();
         addedItemsStage.setTitle("Added Items");
-    
+
         ListView<String> addedItemsListView = new ListView<>(); // Use ListView<String> instead of ListView<Food>
         ObservableList<String> addedItems = FXCollections.observableArrayList(); // Use ObservableList<String> instead of ObservableList<Food>
-    
+
         // Populate the added items list
         for (Food food : addedFoods) {
             addedItems.add(food.getName() + " - Quantity: " + food.getQuantity()); // Display name and quantity
         }
-    
+
         addedItemsListView.setItems(addedItems);
-    
+
         VBox root = new VBox(10);
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.CENTER);
-    
+
         Button confirmButton = new Button("Confirm");
         confirmButton.setOnAction(e -> {
             // Proceed to the food cart controller screen
@@ -157,15 +176,15 @@ public class FoodMenuController {
             stage.setScene(foodCartController.getScene());
             addedItemsStage.close();
         });
-    
+
         root.getChildren().addAll(new Label("Added Items"), addedItemsListView, confirmButton);
-    
+
         Scene scene = new Scene(root, 300, 200);
         addedItemsStage.setScene(scene);
         addedItemsStage.initModality(Modality.APPLICATION_MODAL);
         addedItemsStage.show();
     }
-    
+
     private void goBack(ActionEvent event) {
         HomeController home = new HomeController(stage);
         stage.setScene(home.getScene());
@@ -175,12 +194,7 @@ public class FoodMenuController {
         this.foodSelectionCallback = callback;
     }
 
-    public void setInitialSelectedAndAdded( ObservableList<Food> addedFoods) {
-        
+    public void setInitialSelectedAndAdded(ObservableList<Food> addedFoods) {
         this.addedFoods = addedFoods;
-        
     }
 }
-
-
-
